@@ -23,15 +23,15 @@ class UploadFile extends CI_Model {
 
         // Create ServiceAccount manually
         $this->_serviceAccount = ServiceAccount::fromValue([
-            'type' => 'service_account',
-            'project_id' => $this->_firebaseConfig['project_id'],
-            'client_email' => $this->_firebaseConfig['client_email'],
-            'private_key' => $this->_firebaseConfig['private_key'],
+            'type'			=> 'service_account',
+            'project_id'	=> $this->_firebaseConfig['project_id'],
+            'client_email'	=> $this->_firebaseConfig['client_email'],
+            'private_key'	=> $this->_firebaseConfig['private_key'],
         ]);
 
-        $this->_firebase = (new Factory)->withServiceAccount($this->_serviceAccount);
-        $this->storage = $this->_firebase->createStorage();
-        $this->auth = $this->_firebase->createAuth();
+        $this->_firebase	= (new Factory)->withServiceAccount($this->_serviceAccount);
+        $this->storage		= $this->_firebase->createStorage();
+        $this->auth			= $this->_firebase->createAuth();
     }
 
     function uploadBucket($filePath, $fileName) {
