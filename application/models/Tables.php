@@ -78,7 +78,7 @@ class Tables extends CI_Model {
 						}
 						// Jika $value mengandung kata "Assets", tambahkan url Assets img ke kunci
 						if (strpos($modifiedValue, 'Assets') !== false) {
-							$modifiedValue = '<div class="avatar-xs img-fluid rounded-circle"><img src="'.base_url(str_replace(',',', ',$value)?? '---').'" alt class="member-img img-fluid d-block rounded-circle"></div>';
+							$modifiedValue = '<div class="avatar-xs img-fluid rounded-circle"><img src="'.str_replace(',',', ',$value)?? '---'.'" alt class="member-img img-fluid d-block rounded-circle"></div>';
 						}
 						// Tambahkan ke array baru
 						$modifiedArray[$modifiedKey] = $modifiedValue;

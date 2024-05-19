@@ -15,7 +15,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="avatar-md profile-user-wid mb-4">
-                                    <img src="<?=$img_location ? base_url().$img_location : base_url().'assets/images/user_icon.png'?>" alt="" class="img-thumbnail rounded-circle">
+                                    <img src="<?=$img_location ? $img_location : base_url().'assets/images/user_icon.png'?>" alt="" class="img-thumbnail rounded-circle">
                                 </div>
                                 <h5 class="font-size-15 text-truncate"><?=ucwords($nama_lengkap)?></h5>
                                 <p class="text-muted mb-0 text-truncate"><?=ucwords($description)?></p>
