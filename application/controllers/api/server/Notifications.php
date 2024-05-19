@@ -10,6 +10,7 @@ class Notifications extends RestController {
     private $_ApiKey;
     private $_AuthCheck;
     private $_RsToken;
+	
     function __construct() {
         parent::__construct();
         $this->load->model(['UsersModels','NotificationsModels']);
@@ -66,7 +67,7 @@ class Notifications extends RestController {
 					$http	= RestController::HTTP_CREATED;
 					$output = array(
 						'title'     => 'Notify Send',
-						'message'   => json_decode($notify),
+						'message'   => $notify['name'],
 						'info'		=> 'success',
 						'location'	=> 'dashboard',
 					);

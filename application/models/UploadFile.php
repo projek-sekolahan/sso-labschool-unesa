@@ -1,5 +1,47 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
+use Google\Cloud\Storage\StorageClient;
+
 class UploadFile extends CI_Model {
+
+	protected $CI;
+    protected $storage;
+    protected $auth;
+    private $_serviceAccount;
+	private $_firebaseConfig;
+    private $_firebase;
+
+	function __construct() {
+        parent::__construct();
+        $this->CI = &get_instance();
+        $this->CI->load->config('firebase');
+
+        // Load the configuration
+        $this->_firebaseConfig	= $this->CI->config->item('firebase');
+
+        // Create ServiceAccount manually
+        $this->_serviceAccount = ServiceAccount::fromValue([
+			'type'			=> 'service_account',
+            'project_id'	=> $this->_firebaseConfig['project_id'],
+            'client_email'	=> $this->_firebaseConfig['client_email'],
+            'private_key'	=> $this->_firebaseConfig['private_key'],
+        ]);
+
+        $this->_firebase	= (new Factory)->withServiceAccount($this->_serviceAccount);
+        $this->storage		= $this->_firebase->createStorage();
+        $this->auth			= $this->_firebase->createAuth();
+    }
+
+	function uploadBucket($filePath, $fileName) {
+		$bucket	= $this->storage->getBucket($this->CI->config->item('firebase')['storage_bucket']);
+		$file	= fopen($filePath, 'r');
+		$bucket->upload($file, ['name' => $fileName]);
+		return "https://storage.googleapis.com/".$this->CI->config->item('firebase')['storage_bucket'].$filePath.$fileName;
+	}
+
 	function photo($folder, $subfolder, $data) {
 		$mime_type = @mime_content_type($data['img']);
 		$allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -29,13 +71,14 @@ class UploadFile extends CI_Model {
 		if ($table == 'users_img' || $table == 'trx_presensi') {
 			$name = base64_encode(str_replace(' ', '', $data['user_id']) . ':' . strtotime(date('d-m-Y H:m:s')));
 		}
-		$filePath = 'assets/' . $folder . '/' . $subfolder . '/';
+		$filePath = '/' . $subfolder . '/';
 		$fileName = uniqid() . $name . time() . '.' . $extension;
-		$filesPhoto = $filePath . $fileName;
-		
+		$fileUrl	= $this->uploadBucket($filePath, $fileName);
 		// Save the file to disk
-		file_put_contents($filesPhoto, $fileData);
-		return $filesPhoto;
-	}	
+		// $filePath = 'assets/' . $folder . '/' . $subfolder . '/';
+		// $filesPhoto = $filePath . $fileName;
+		// file_put_contents($filesPhoto, $fileData);
+		return $fileUrl;
+	}
 }
 ?>

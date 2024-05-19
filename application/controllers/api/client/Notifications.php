@@ -10,6 +10,7 @@ class Notifications extends RestController {
     private $_csrfToken;
     private $_paramToken;
 	private $_RsToken;
+    
     function __construct() {
         parent::__construct();
         $this->_clientAPI   = new ClientAPI();
