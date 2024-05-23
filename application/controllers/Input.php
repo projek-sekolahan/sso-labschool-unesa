@@ -215,12 +215,27 @@ class Input extends CI_Controller {
 				$cekusersiswa = $this->Master->get_custom_query($sqlcekusrsiswa)->row();
 				if ($cekuserdata || $cekusersiswa) {
 					// Users password default
+					if ($this->input->post('sebagai') == 4) {
+						$fullname	= ucwords(strtolower($cekusersiswa->full_name));
+						$phone		= $cekusersiswa->phone_number;
+						$inputemail	= strtolower($cekusersiswa->email);
+					}
+					else if ($this->input->post('sebagai') == 5 || $this->input->post('sebagai') == 6) {
+						$fullname	= ucwords(strtolower($cekuserdata->full_name));
+						$phone		= $cekuserdata->phone_number;
+						$inputemail	= strtolower($cekuserdata->email);
+					}
+					else {
+						$fullname	= ucwords(strtolower($this->input->post('namaLengkap')));
+						$phone		= $this->input->post('phone');
+						$inputemail	= strtolower($this->input->post('username'));
+					}
 					$hash				= $this->ion_auth_model->hash_password('User@12345');
 					$tokenkey			= hash('sha1',base64_encode($email.':'.'User@12345'));
 					$identity_column	= $this->config->item('identity', 'ion_auth');
-					$identity			= ($identity_column === 'email') ? $email : strtolower($this->input->post('username'));
+					$identity			= ($identity_column === 'email') ? $email : $inputemail;
 					$ip_address			= $this->input->ip_address();
-					$additional_data	= ['key'=>$tokenkey,'ip_addresses'=>$ip_address,'password'=>$hash,'phone'=>$this->input->post('phone'),'nama_lengkap'=>ucwords(strtolower($this->input->post('namaLengkap')))];
+					$additional_data	= ['key'=>$tokenkey,'ip_addresses'=>$ip_address,'password'=>$hash,'phone'=>$phone,'nama_lengkap'=>$fullname];
 					$additional_group	= ['id'=>$this->input->post('sebagai')];
 					if ($this->ion_auth->register($identity, $email, $additional_data, $additional_group)) {
 						$output = array(
