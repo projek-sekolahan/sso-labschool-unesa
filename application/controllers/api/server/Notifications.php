@@ -43,10 +43,31 @@ class Notifications extends RestController {
 
     public function index_post($keterangan) {
         if (is_object($this->_RsToken)) {
-			$users	= $this->_master->get_row('token',['key'=>$this->_RsToken->apikey])->row();
+			$users = $this->_master->get_row('token',['key'=>$this->_RsToken->apikey])->row();
+			if ($keterangan=='registerToken') {
+				$registerToken = array(
+					'token_user'	=> $users->key,
+					'device_token'	=> $this->input->post('token_fcm'),
+				);
+				$result	= $this->_master->get_row('token_fcm',['token_user'=>$users->key])->result();
+				if ($result==null) {
+					$this->_master->save_data('token_fcm', $registerToken);
+				} else {
+					$this->_master->update_data('token_fcm', ['token_user'=>$users->key], $registerToken);
+				}
+				$output = array(
+					'title'     => 'Data Updated',
+					'message'   => 'Success Updated',
+					'info'		=> 'success',
+					'location'	=> 'dashboard',
+				);
+				$http       = RestController::HTTP_CREATED;
+				$output     = $output;
+				
+			}
 			if ($keterangan=='create') {
 				$notify = $this->NotificationsModels->createNotify(
-					$this->_ApiKey,
+					$users->key,
 					$this->input->post('token_fcm'),
 					$this->input->post('type'),
 					$this->input->post('category'),
@@ -74,7 +95,7 @@ class Notifications extends RestController {
 				}
 			}
 			if ($keterangan=='detail') {
-				$result	= $this->_master->get_row('notifications',['token'=>$this->_RsToken->apikey])->result();
+				$result	= $this->_master->get_row('notifications',['token'=>$users->key])->result();
 				if ($result==null) {
 					$http   = RestController::HTTP_BAD_REQUEST;
 					$output = array(

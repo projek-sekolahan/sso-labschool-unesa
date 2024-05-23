@@ -5,7 +5,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="text-primary p-3">
-                                    <h5 class="text-primary">Selamat Datang Kembali <?=ucwords($name)?></h5>
+                                    <h5 class="text-primary">Selamat Datang Kembali <?=ucwords($description)?></h5>
                                     <p>Aplikasi Administrasi Sekolah</p>
                                 </div>
                             </div>

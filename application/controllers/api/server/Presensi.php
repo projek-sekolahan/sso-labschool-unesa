@@ -68,7 +68,8 @@ class Presensi extends RestController {
 						'geolocation'		=> $data['geolocation'], // lat-long
 						'foto_presensi'		=> $hasil_img, // foto format image presensi
 					);
-					// $this->NotificationsModels->createNotify($this->_ApiKey,'success','notifikasi','Presensi Berhasil','Terima Kasih Telah Mengisi Presensi, Untuk Lihat Detailnya Silahkan Cek Menu Riwayat Presensi','/riwayat','0');
+					$result	= $this->Master->get_row('token_fcm',['token_user'=>$this->_ApiKey])->row();
+					$this->NotificationsModels->createNotify($result->token_user,$result->device_token,'success','notifikasi','Presensi Berhasil','Terima Kasih Telah Mengisi Presensi, Untuk Lihat Detailnya Silahkan Cek Menu Riwayat Presensi','/riwayat','0');
 					return $this->_master->save_data('trx_presensi',$presensi);
 				}
 			}
@@ -114,7 +115,8 @@ class Presensi extends RestController {
 			'keterangan_kehadiran'  => $data['keterangan_kehadiran'], // ket. izin,sakit,dinas-luar
 			'foto_surat'            => $hasil_img, // foto surat format image izin,sakit,dinas-luar
 		);
-		// $this->NotificationsModels->createNotify($this->_ApiKey,'success','notifikasi','Presensi Berhasil','Terima Kasih Telah Mengisi Presensi, Untuk Lihat Detailnya Silahkan Cek Menu Riwayat Presensi','/riwayat','0');
+		$result	= $this->Master->get_row('token_fcm',['token_user'=>$this->_ApiKey])->row();
+		$this->NotificationsModels->createNotify($result->token_user,$result->device_token,'success','notifikasi','Presensi Berhasil','Terima Kasih Telah Mengisi Presensi, Untuk Lihat Detailnya Silahkan Cek Menu Riwayat Presensi','/riwayat','0');
 		return $this->_master->save_data('trx_presensi', $presensi);		
 	}
 

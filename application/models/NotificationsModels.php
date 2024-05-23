@@ -42,17 +42,22 @@ class NotificationsModels extends CI_Model {
     }
 
     function createNotify($token, $tokenFCM, $type, $category, $title, $message, $url, $isRead) {
-        $notifications = array(
-            'token'	=> $token,
-            'type'	=> $type, 
-            'category'	=> $category, 
-            'title'	=> $title,
-            'message'	=> $message, 
-            'url'	=> $url, 
-            'is_read'	=> $isRead,
-        );
-        $this->Master->save_data('notifications', $notifications);
-        return $this->sendNotification($tokenFCM, $category, $title, $message, $type, $url);
+        $result	= $this->Master->get_row('token_fcm',['token_user'=>$token,'device_token'=>$tokenFCM])->row();
+        if ($result) {
+            $notifications = array(
+                'token'	=> $result->token_user,
+                'type'	=> $type, 
+                'category'	=> $category, 
+                'title'	=> $title,
+                'message'	=> $message, 
+                'url'	=> $url, 
+                'is_read'	=> $isRead,
+            );
+            $this->Master->save_data('notifications', $notifications);
+            return $this->sendNotification($result->device_token, $category, $title, $message, $type, $url);
+        } else {
+            return false;
+        }
     }
 
     function getAccessToken() {

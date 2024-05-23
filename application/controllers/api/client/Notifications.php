@@ -58,7 +58,7 @@ class Notifications extends RestController {
     public function index_post($keterangan) {
         if ($this->_AuthCheck->checkTokenApi($keterangan,$this->input->post(explode('.',$_SERVER['HTTP_HOST'])[0]),$this->input->post('AUTH_KEY'))) {
 			$urlAPI	= 'notifications/'.$keterangan;
-			if ($keterangan=='create' || $keterangan=='detail') {
+			if ($keterangan=='create' || $keterangan=='detail' || $keterangan=='registerToken') {
 				$dataparam	= array_merge($this->input->post(),$this->_paramToken);
 			}
 			$result	= $this->_clientAPI->postContent($urlAPI,$this->input->post('AUTH_KEY'),$dataparam);
