@@ -6,7 +6,7 @@ class Input extends CI_Controller {
     public function __construct() {
 		parent::__construct();
 		$this->load->library(['ion_auth']);
-        $this->load->model(['Master','UploadFile']);
+        $this->load->model(['Master','UploadFile','FacesModels']);
 		$this->method = $_SERVER['REQUEST_METHOD'];
 		$this->getURL = $_SERVER['REQUEST_URI'];
 		if($this->method != 'POST') {
@@ -47,6 +47,34 @@ class Input extends CI_Controller {
 		}
 	}
 
+	public function loadFace() {
+		$user	= $this->Master->get_row('users_login',['mail_code'=>$this->input->post(explode('.',$_SERVER['HTTP_HOST'])[0])])->row();
+		if ($user) {
+			$loadfaceid	= $this->FacesModels->loadFaces($user->id);
+			$status = True;
+			$output = array(
+				'title'		=> 'Load Data Success',
+				'info'		=> 'success',
+				'message'   => 'Data Facecam Success',
+				'location'	=> 'facecam',
+				'facecam'	=> $loadfaceid,
+			);
+		} else {
+			$status = False;
+			$output = array(
+				'title'		=> 'Load Data Error',
+				'info'		=> 'error',
+				'message'   => 'Data Facecam Error',
+				'location'	=> 'facecam',
+				'facecam'	=> null,
+			);
+		}
+		echo json_encode([
+			'status'    => $status,
+			'data'      => $output,
+			'csrfHash'  => $this->security->get_csrf_hash()
+		]);
+	}
 	public function facecam() {
 		$user	= $this->Master->get_row('users_login',['mail_code'=>$this->input->post(explode('.',$_SERVER['HTTP_HOST'])[0])])->row();
 		if ($user) {
