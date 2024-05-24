@@ -61,8 +61,8 @@ class Tables extends CI_Model {
 						$modifiedKey = ucwords(str_replace('_',' ',$key)?? '---');
 						// Ubah nilai menjadi capitalize
 						$modifiedValue = $value=== null ? '---' : ucwords(str_replace(',',', ',$value)?? '---');
-						// Memeriksa apakah kunci asli adalah 'img_location'
-						if ($key == 'img_location') {
+						// Memeriksa apakah kunci asli adalah 'img'
+						if ($key == 'img_location' || $key == 'foto_surat' || $key == 'foto_presensi') {
 							// Jika ya, ubah kunci menjadi 'Image'
 							$modifiedKey = 'Image';
 						}						
@@ -76,9 +76,9 @@ class Tables extends CI_Model {
 							// Jika nilai adalah '1', ubah menjadi 'dashboard', jika tidak biarkan nilai yang sama
 							$modifiedValue = ($modifiedValue == '1') ? 'Yes Child Pages' : 'No Parent Pages';
 						}
-						// Jika $value mengandung kata "Assets", tambahkan url Assets img ke kunci
-						if (strpos($modifiedValue, 'Assets') !== false) {
-							$modifiedValue = '<div class="avatar-xs img-fluid rounded-circle"><img src="'.str_replace(',',', ',$value)?? '---'.'" alt class="member-img img-fluid d-block rounded-circle"></div>';
+						// Jika $value mengandung kata "Https", tambahkan url img ke kunci
+						if (strpos($modifiedValue, 'Https') !== false) {
+							$modifiedValue = '<div class="avatar-xs img-fluid rounded-circle"><img src="'.$value.'" alt class="member-img img-fluid d-block rounded-circle"></div>';
 						}
 						// Tambahkan ke array baru
 						$modifiedArray[$modifiedKey] = $modifiedValue;

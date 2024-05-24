@@ -6,6 +6,7 @@ Contact: themesbrand@gmail.com
 File: Sweetalert Js File
 */
     function errmsg(xhr, status, error) {
+        localStorage.clear();
         var t = xhr.responseJSON;
         if (xhr.status=='403' || xhr.status=='500' || xhr.status=='404' || xhr.status=='400') {
             if (typeof(t)=='object') {

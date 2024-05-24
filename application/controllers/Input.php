@@ -49,32 +49,22 @@ class Input extends CI_Controller {
 
 	public function loadFace() {
 		$user	= $this->Master->get_row('users_login',['mail_code'=>$this->input->post(explode('.',$_SERVER['HTTP_HOST'])[0])])->row();
-		if ($user) {
-			$loadfaceid	= $this->FacesModels->loadFaces($user->id);
-			$status = True;
-			$output = array(
-				'title'		=> 'Load Data Success',
-				'info'		=> 'success',
-				'message'   => 'Data Facecam Success',
-				'location'	=> 'facecam',
-				'facecam'	=> $loadfaceid,
-			);
-		} else {
-			$status = False;
-			$output = array(
-				'title'		=> 'Load Data Error',
-				'info'		=> 'error',
-				'message'   => 'Data Facecam Error',
-				'location'	=> 'facecam',
-				'facecam'	=> null,
-			);
-		}
+		$loadfaceid	= $this->FacesModels->loadFaces($user->id,$user->facecam_id);
+		$status = True;
+		$output = array(
+			'title'		=> 'Load Data Success',
+			'info'		=> 'success',
+			'message'   => 'Data Facecam Success',
+			'location'	=> 'facecam',
+			'facecam'	=> $loadfaceid,
+		);
 		echo json_encode([
 			'status'    => $status,
 			'data'      => $output,
 			'csrfHash'  => $this->security->get_csrf_hash()
 		]);
 	}
+
 	public function facecam() {
 		$user	= $this->Master->get_row('users_login',['mail_code'=>$this->input->post(explode('.',$_SERVER['HTTP_HOST'])[0])])->row();
 		if ($user) {
@@ -235,8 +225,7 @@ class Input extends CI_Controller {
 			$email			= strtolower($this->input->post('username'));
 			$checkidentity	= $this->ion_auth->email_check($email);
 			if (!$checkidentity) {
-				// save new user
-				// check dummy data user_data & user_siswa
+				// save new user check dummy data user_data & user_siswa
 				$sqlcekusrdata	= "SELECT * FROM users_data WHERE phone_number = '".$this->input->post('phone')."'";
 				$cekuserdata	= $this->Master->get_custom_query($sqlcekusrdata)->row();
 				$sqlcekusrsiswa = "SELECT * FROM users_siswa WHERE phone_number = '".$this->input->post('phone')."'";
@@ -329,3 +318,4 @@ class Input extends CI_Controller {
 	}
 	
 }
+?>
