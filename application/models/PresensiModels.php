@@ -2,20 +2,43 @@
 class PresensiModels extends CI_Model {
 	function summary($where) {
 		$sqlsum    = "
-		SELECT
-		ud.user_id,
-		ud.nama_lengkap,
-		SUM(CASE WHEN kehadiran = 'Hadir' THEN 1 ELSE 0 END)AS hadir, SUM(
-			CASE WHEN kehadiran = 'Tidak Hadir' THEN 1 ELSE 0 END
-		)AS tidak_hadir, SUM(
-			CASE WHEN kehadiran IN('Hadir', 'Tidak Hadir')THEN 1 ELSE 0 END
-		)AS total_presensi, SUM(
-			CASE WHEN kehadiran = 'Terlambat' OR kehadiran = 'Cepat Pulang' THEN 1 ELSE 0 END
-		)AS terlambat_pulang_cepat
-		FROM(
-			SELECT CASE WHEN a.status_kehadiran IN('masuk', 'dinas-luar')THEN 'Hadir' WHEN a.status_kehadiran IN('sakit', 'izin')THEN 'Tidak Hadir' WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi)BETWEEN '07:05:00' AND '10:00:00' THEN 'Terlambat' WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi)BETWEEN '12:00:00' AND '14:59:00' THEN 'Cepat Pulang' END AS kehadiran,
-			a.user_id FROM trx_presensi a WHERE ".$where." a.tanggal_presensi >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 30 DAY), '%Y-%m-%d')AND(a.status_kehadiran IN('masuk', 'pulang', 'dinas-luar')OR a.status_kehadiran IN('sakit', 'izin'))
-		)AS kehadiran_summary
+SELECT 
+    ud.user_id,
+    ud.nama_lengkap,
+    SUM(CASE 
+            WHEN kehadiran = 'Hadir' OR kehadiran = 'Terlambat' THEN 1 
+            ELSE 0 
+        END) AS hadir,
+    SUM(CASE 
+            WHEN kehadiran = 'Tidak Hadir' THEN 1 
+            ELSE 0 
+        END) AS tidak_hadir,
+    SUM(CASE 
+            WHEN kehadiran IN ('Hadir', 'Terlambat', 'Tidak Hadir') THEN 1 
+            ELSE 0 
+        END) AS total_presensi,
+    SUM(CASE 
+            WHEN kehadiran = 'Terlambat' OR kehadiran = 'Cepat Pulang' THEN 1 
+            ELSE 0 
+        END) AS terlambat_pulang_cepat
+FROM (
+    SELECT 
+        a.user_id,
+        CASE 
+            WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) > '06:50:59' THEN 'Terlambat'
+            WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) < '15:00:00' THEN 'Cepat Pulang'
+            WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) <= '06:50:59' THEN 'Hadir'
+            WHEN a.status_kehadiran = 'dinas-luar' THEN 'Hadir'
+            WHEN a.status_kehadiran IN ('sakit', 'izin') THEN 'Tidak Hadir'
+        END AS kehadiran
+    FROM trx_presensi a 
+			WHERE ".$where." a.tanggal_presensi >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 30 DAY), '%Y-%m-%d')
+	AND (
+        (a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '05:30:00' AND '17:59:59') 
+        OR (a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '07:00:00' AND '23:59:59') 
+        OR (a.status_kehadiran IN ('dinas-luar', 'izin', 'sakit'))
+    )
+		) AS kehadiran_summary
 		JOIN users_details ud ON kehadiran_summary.user_id = ud.user_id
 		GROUP BY ud.user_id,
 		ud.nama_lengkap";
@@ -30,10 +53,10 @@ class PresensiModels extends CI_Model {
 		$sqldetail="select a.status_kehadiran, a.foto_presensi, a.keterangan_kehadiran, a.foto_surat, b.nama_lengkap,
 		DATE_FORMAT(a.tanggal_presensi, '%Y-%m-%d') AS tanggal_presensi, TIME(a.tanggal_presensi) AS waktu_presensi,  
 		CASE
-		WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '05:30:00' AND '07:04:00' THEN 'Masuk Normal'
-		WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '15:00:00' AND '17:00:00' THEN 'Pulang Normal'
-		WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '07:05:00' AND '11:59:00' THEN 'Terlambat Masuk'
-		WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '12:00:00' AND '14:59:00' THEN 'Pulang Cepat'
+		WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '05:30:00' AND '06:50:59' THEN 'Masuk Normal'
+		WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '15:00:00' AND '23:59:59' THEN 'Pulang Normal'
+		WHEN a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '06:51:00' AND '17:59:59' THEN 'Terlambat Masuk'
+		WHEN a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '07:00:00' AND '14:59:59' THEN 'Pulang Cepat'
 		WHEN a.status_kehadiran = 'izin' THEN 'Izin'
 		WHEN a.status_kehadiran = 'sakit' THEN 'Sakit'
 		WHEN a.status_kehadiran = 'dinas-luar' THEN 'Dinas Luar'
@@ -44,7 +67,7 @@ class PresensiModels extends CI_Model {
 		WHERE a.user_id = '".$paramid."'
 		AND DATE_FORMAT(a.tanggal_presensi, '%Y-%m-%d') = '".str_replace(' ', '', $paramtgl)."'
 		AND (
-			(a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '05:30:00' AND '11:59:00') OR (a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '12:00:00' AND '17:00:00') OR (a.status_kehadiran = 'dinas-luar') OR (a.status_kehadiran = 'izin') OR (a.status_kehadiran = 'sakit')
+			(a.status_kehadiran = 'masuk' AND TIME(a.tanggal_presensi) BETWEEN '05:30:00' AND '17:59:00') OR (a.status_kehadiran = 'pulang' AND TIME(a.tanggal_presensi) BETWEEN '15:00:00' AND '23:59:00') OR (a.status_kehadiran = 'dinas-luar') OR (a.status_kehadiran = 'izin') OR (a.status_kehadiran = 'sakit')
 		)";
 		$result     = $this->Master->get_custom_query($sqldetail)->result();
 		return $result;
@@ -59,10 +82,10 @@ class PresensiModels extends CI_Model {
 		,MIN(CASE WHEN a.status_kehadiran = 'masuk' THEN TIME(a.tanggal_presensi)ELSE NULL END)AS jam_masuk, CASE
 		WHEN MIN(
 			CASE WHEN a.status_kehadiran = 'masuk' THEN TIME(a.tanggal_presensi)ELSE NULL END
-		)BETWEEN '05:30:00' AND '07:04:00' THEN 'Masuk Normal'
+		)BETWEEN '05:30:00' AND '06:50:59' THEN 'Masuk Normal'
 		WHEN MIN(
 			CASE WHEN a.status_kehadiran = 'masuk' THEN TIME(a.tanggal_presensi)ELSE NULL END
-		)BETWEEN '07:05:00' AND '11:59:00' THEN 'Terlambat Masuk'
+		)BETWEEN '06:51:00' AND '17:59:59' THEN 'Terlambat Masuk'
 		ELSE NULL
 		END AS status_masuk,
 		MAX(
@@ -70,10 +93,10 @@ class PresensiModels extends CI_Model {
 		)AS jam_pulang, CASE
 		WHEN MAX(
 			CASE WHEN a.status_kehadiran = 'pulang' THEN TIME(a.tanggal_presensi)ELSE NULL END
-		)BETWEEN '15:00:00' AND '17:00:00' THEN 'Pulang Normal'
+		)BETWEEN '15:00:00' AND '23:59:59' THEN 'Pulang Normal'
 		WHEN MAX(
 			CASE WHEN a.status_kehadiran = 'pulang' THEN TIME(a.tanggal_presensi)ELSE NULL END
-		)BETWEEN '12:00:00' AND '14:59:00' THEN 'Pulang Cepat'
+		)BETWEEN '07:00:00' AND '14:59:59' THEN 'Pulang Cepat'
 		ELSE NULL
 		END AS status_pulang,
 		CASE

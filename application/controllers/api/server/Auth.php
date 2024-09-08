@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use chriskacerguis\RestServer\RestController;
 
 class Auth extends RestController {
+	
 	private $_master;
 	private $_AuthToken;
 	private $_TokenKey;
@@ -14,7 +15,6 @@ class Auth extends RestController {
     function __construct() {
         // Construct the parent class
         parent::__construct();
-		$this->load->library(['ion_auth']);
 		$this->lang->load('auth');
 		$this->_master		= new Master();
 		$this->_AuthToken	= new AuthToken();

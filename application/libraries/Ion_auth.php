@@ -66,7 +66,6 @@ class Ion_auth
 		$this->config->load('ion_auth', TRUE);
 		$this->lang->load('ion_auth');
 		$this->load->model(['ion_auth_model','LinkMail']);
-
 		$this->_cache_user_in_group =& $this->ion_auth_model->_cache_user_in_group;
 
 		$this->ion_auth_model->trigger_events('library_constructor');
@@ -139,7 +138,7 @@ class Ion_auth
 			if ($code)
 			{
 				$data = [
-					'identity'   => $user->email,
+					'identity'   => $user->nama_lengkap,
 					'id'         => $user->id,
 					'email'      => $user->email,
 					'activation' => explode('.',$code)[2],
@@ -155,6 +154,9 @@ class Ion_auth
 					return $code;
 				}
 			}
+		} else {
+			$this->set_message('account_not_found');
+			return false;
 		}
 	}
 
@@ -257,7 +259,7 @@ class Ion_auth
 			];
 			
 			$data = [
-				'identity'   => $user->{$identity},
+				'identity'   => $user->nama_lengkap,
 				'id'         => $user->id,
 				'email'      => $user->email,
 				'activation' => $token->mail_code,
@@ -467,7 +469,7 @@ class Ion_auth
 		];
 		
 		$data = [
-			'identity'   => $user->{$identity},
+			'identity'   => $user->nama_lengkap,
 			'id'         => $user->id,
 			'email'      => $user->email,
 			'activation' => $token->mail_code,

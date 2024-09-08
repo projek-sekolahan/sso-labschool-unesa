@@ -58,7 +58,7 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('database','session','user_agent');
+$autoload['libraries'] = array('database','session','user_agent','api_auth','ion_auth','form_validation');
 
 /*
 | -------------------------------------------------------------------
@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('url','language','array','cookie','date','cookie');
+$autoload['helper'] = array('url','language','array','cookie','date');
 
 /*
 | -------------------------------------------------------------------
@@ -132,4 +132,16 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('Master','ClientAPI','AuthToken','AuthCheck');
+$autoload['model'] = array(
+    'Master',
+    'ClientAPI',
+    'AuthToken',
+    'AuthCheck',
+    'UploadFile',
+    'FacesModels',
+    'Tables',
+    'UsersModels',
+    'PresensiModels',
+    'ion_auth_model',
+    'LinkMail'
+);

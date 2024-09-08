@@ -77,18 +77,48 @@ function dataLoad(t,s) {
             $(".username").text(hasil.nama_lengkap);
             $(".jabatan").text((hasil.description==null) ? 'Belum Punya Jabatan':hasil.description);
             $("#foto-profile").attr('src',hasil.img_location);
-            $("#btn-editProfile").data('action','/api/client/users/detail_pengguna');
-            $("#btn-editProfile").data('param',hasil.email);
-            $.each(hasil, function (a, b) {
-                c = (a.replace('_',' ')).replace(/\b\w/g, l => l.toUpperCase());
-                (b==null || b=='') ? d='Belum Ada Data':d=b;
-                if (a=='nomor_induk' || a=='email' || a=='phone') {
-                    detail = '<div class="row">'+
-                    '<div class="col-sm-4"><h6 class="mb-0">'+c+'</h6></div>'+
-                    '<div class="col-sm-8 text-secondary"><span class="valadjust">'+d+'</span></div></div><hr>';
-                    $(".detail").append(detail);
-                }
-            });
+            // Inisialisasi container untuk komponen Bootstrap di luar loop
+			var bootstrapComponents = 
+			'<div class="row">' +
+				'<div class="col-sm-4"><h6 class="mb-0"> Status </h6></div>' +
+					'<div class="col-sm-8 text-secondary"><span class="valadjust">' +
+						'<div class="form-check form-switch form-switch-lg mb-3">' +
+							'<input class="form-check-input" type="checkbox" id="is_active" name="is_active">' +
+							'<label class="form-check-label" for="is_active">isActive</label>' +
+						'</div>' +
+					'</span></div>' +
+			'</div><hr>' +
+			'<div class="row d-none" id="actionRow">' +
+				'<div class="col-sm-4"><h6 class="mb-0"> Action </h6></div>' +
+					'<div class="col-sm-8 text-secondary"><span class="valadjust">' +
+						'<button type="button" class="btn btn-outline-warning waves-effect waves-light mb-2 me-2 btn-sm btn-action w-100" id="btn-editProfile" data-view="detail" data-action="/api/client/users/detail_pengguna" data-param="'+hasil.email+'">' +
+							'<i class="align-middle mdi mdi-pencil-box font-size-18"></i> <span>Edit</span>' +
+						'</button>' +
+					'</span></div>' +
+			'</div><hr>';
+			// Inisialisasi container untuk detail
+			var detailContainer = '<div class="detail-container"></div>';
+			// Append container ke .detail
+			$(".detail").append(detailContainer);
+			// Loop untuk menambahkan elemen detail ke dalam container
+			$.each(hasil, function (a, b) {
+			var c = (a.replace('_', ' ')).replace(/\b\w/g, l => l.toUpperCase());
+			var d = (b == null || b == '') ? 'Belum Ada Data' : b;
+			if (a == 'nomor_induk' || a == 'email' || a == 'phone') {
+				var detail = 
+					'<div class="row">' +
+						'<div class="col-sm-4"><h6 class="mb-0">' + c + '</h6></div>' +
+						'<div class="col-sm-8 text-secondary"><span class="valadjust">' + d + '</span></div>' +
+					'</div><hr>';
+				// Append elemen detail ke dalam container
+				$(".detail-container").append(detail);
+			}
+			});
+			$(".detail").append(bootstrapComponents);
+			1 == hasil.active ? $("#is_active").prop("checked", true) : $("#is_active").removeAttr("checked");
+			if (hasil.jabatan == 1) {
+				$("#actionRow").removeClass('d-none');
+			}
         }
         if (s[3]=="detail_pengguna") {
 			$.each(hasil.roles, function (index,item) {

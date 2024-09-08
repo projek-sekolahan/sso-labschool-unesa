@@ -49,6 +49,32 @@ class UploadFile extends CI_Model {
         return "https://storage.googleapis.com/" . $this->_firebaseConfig['storage_bucket'] . "/" . $fileName;
     }
 
+    public function deleteBucket($fileUrl) {
+        // Ekstrak path relatif dari URL
+        $parsedUrl = parse_url($fileUrl);
+        $filePath = ltrim($parsedUrl['path'], '/');
+        
+        // Hapus nama bucket dari path
+        $bucketName = $this->_firebaseConfig['storage_bucket'];
+        if (strpos($filePath, $bucketName) === 0) {
+            $filePath = substr($filePath, strlen($bucketName) + 1);
+        }
+        
+        $bucket = $this->storage->getBucket($this->_firebaseConfig['storage_bucket']);
+
+        // Get the object
+        $object = $bucket->object($filePath);
+
+        // Check if the object exists
+        if (!$object->exists()) {
+            return false;
+        }
+
+        // Delete the object
+        $object->delete();
+        return true;
+    }
+
     function photo($folder, $subfolder, $data) {
         $mime_type = @mime_content_type($data['img']);
         $allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -76,6 +102,12 @@ class UploadFile extends CI_Model {
             $name = '-artikel-' . base64_encode($data['articleid'] . ':' . strtotime(date('d-m-Y H:m:s')));
         }
         if ($table == 'users_img' || $table == 'trx_presensi') {
+            if ($table == 'users_img') {
+                $fileImgUser = $this->cekImgUser($data['user_id']);
+                if ($fileImgUser) {
+                    $this->deleteBucket($fileImgUser);
+                }
+            }
             $name = base64_encode(str_replace(' ', '', $data['user_id']) . ':' . strtotime(date('d-m-Y H:m:s')));
         }
 
@@ -86,7 +118,6 @@ class UploadFile extends CI_Model {
 
         // Upload file ke Firebase Storage
         $filePath = $subfolder . '/' . $fileName;
-        
         $fileUrl = $this->uploadBucket($tempFilePath, $filePath);
 
         // Hapus file sementara setelah diupload
@@ -95,5 +126,13 @@ class UploadFile extends CI_Model {
         // Return the file URL
         return $fileUrl;
     }
+
+    function cekImgUser($userID) {
+        $cekimg = $this->Master->get_row('users_img',['user_id'=>$userID])->row();
+        if ($cekimg) {
+            return $cekimg->img_location;
+        }
+    }
+
 }
 ?>

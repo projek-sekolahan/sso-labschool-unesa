@@ -663,7 +663,7 @@ class Ion_auth_model extends CI_Model
 						  ->where($this->identity_column, $identity)
 						  ->limit(1)
 						  ->get($this->tables['users_details']);
-
+		
 		if ($query->num_rows() !== 1)
 		{
 			return FALSE;
@@ -690,9 +690,10 @@ class Ion_auth_model extends CI_Model
 			$this->trigger_events(['post_forgotten_password', 'post_forgotten_password_unsuccessful']);
 			return FALSE;
 		}
-
+		
 		$id = $this->get_user_id_from_identity($identity);
 		// Generate random token: smaller size because it will be in the URL
+		
 		$token = $this->_generate_selector_validator_couple(20, 80);
 		
 		$update = [
@@ -1359,6 +1360,7 @@ class Ion_auth_model extends CI_Model
 			    $this->tables['users_login'].'.*',
 			    $this->tables['users_details'].'.user_id as user_id',
 				$this->tables['users_details'].'.email',
+				$this->tables['users_details'].'.nama_lengkap',
 			]);
 		}
 
@@ -2190,7 +2192,7 @@ class Ion_auth_model extends CI_Model
 		$_output = '';
 		foreach ($this->messages as $message)
 		{
-			$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '##' . $message . '##';
+			$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '#' . $message . '#';
 			$_output .= $this->message_start_delimiter . $messageLang . $this->message_end_delimiter;
 		}
 
@@ -2214,7 +2216,7 @@ class Ion_auth_model extends CI_Model
 			$_output = [];
 			foreach ($this->messages as $message)
 			{
-				$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '##' . $message . '##';
+				$messageLang = $this->lang->line($message) ? $this->lang->line($message) : '#' . $message . '#';
 				$_output[] = $this->message_start_delimiter . $messageLang . $this->message_end_delimiter;
 			}
 			return $_output;
@@ -2270,7 +2272,7 @@ class Ion_auth_model extends CI_Model
 		$_output = '';
 		foreach ($this->errors as $error)
 		{
-			$errorLang = $this->lang->line($error) ? $this->lang->line($error) : '##' . $error . '##';
+			$errorLang = $this->lang->line($error) ? $this->lang->line($error) : '#' . $error . '#';
 			$_output .= $this->error_start_delimiter . $errorLang . $this->error_end_delimiter;
 		}
 
@@ -2294,7 +2296,7 @@ class Ion_auth_model extends CI_Model
 			$_output = [];
 			foreach ($this->errors as $error)
 			{
-				$errorLang = $this->lang->line($error) ? $this->lang->line($error) : '##' . $error . '##';
+				$errorLang = $this->lang->line($error) ? $this->lang->line($error) : '#' . $error . '#';
 				$_output[] = $this->error_start_delimiter . $errorLang . $this->error_end_delimiter;
 			}
 			return $_output;
@@ -2495,6 +2497,7 @@ class Ion_auth_model extends CI_Model
 
 		// The code to be email verification
 		$mail_code	= rand(($selector_size*5),($validator_size*5*25));
+		$mail_code	= str_pad($mail_code, 4, '0', STR_PAD_LEFT);
 		
 		return (object) [
 			'selector'			=> $selector,

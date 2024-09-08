@@ -131,7 +131,7 @@ $config['argon2_default_params']	= [
  | This is an arbitrary (long) value to protect against DOS attack.
  */
 $config['site_title']					= "https://".$_SERVER['HTTP_HOST'];       // Site Title, example.com
-$config['admin_email']					= "cs_admin@".$_SERVER['HTTP_HOST']; // Admin Email, admin@example.com
+$config['admin_email']					= "info_presensi@smalabschoolunesa1.sch.id"; // Admin Email, admin@example.com
 $config['default_group']				= 'pengguna';			// Default group, use name
 $config['admin_group']					= 'admin';				// Default administrators group, use name
 $config['user_group']					= 'siswa';				// Default users group, use name
@@ -187,8 +187,8 @@ $config['email_config'] = [
 	'smtp_pass' =>  "uYcEGYI5JVD",   
 	'mailtype'  =>  "html",
 	'charset'   =>  "utf-8",
-	'priority'  =>  "1",
-	'smtp_timeout'  =>  "30", //in seconds
+	'priority'  =>  "3",
+	'smtp_timeout'  =>  "60", //in seconds
 	'wordwrap'  => TRUE,
 	'newline'   => "\r\n",
 	'smtp_crypto'   => "ssl",

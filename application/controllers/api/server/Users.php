@@ -12,8 +12,6 @@ class Users extends RestController {
     private $_RsToken;
     function __construct() {
         parent::__construct();
-        $this->load->model(['Tables','UsersModels','PresensiModels','UploadFile']);
-        $this->load->library(['ion_auth']);
 		$this->_master      = new Master();
 		$this->_AuthToken   = new AuthToken();
         $this->_AuthCheck   = new AuthCheck();
@@ -55,10 +53,10 @@ class Users extends RestController {
                     }
 				} else {
 					$hasil_img = NULL;
-				}
+				}   
 					$hasil_img == NULL ? $userimg = NULL: 
 					$userimg = array(
-						'user_id'	=> $this->input->post('user_id'),
+						'user_id'       => $this->input->post('user_id'),
 						'img_location'  => $hasil_img,
 					);
 					$datasosmed = array(

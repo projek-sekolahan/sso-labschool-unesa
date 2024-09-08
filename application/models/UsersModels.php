@@ -1,7 +1,7 @@
 <?php
 class UsersModels extends CI_Model {
 	function getDetail($param) {
-		$sqluser    = "SELECT a.*,b.group_id,c.description,d.facecam_id 
+		$sqluser    = "SELECT a.*,b.group_id,c.description,d.active,d.facecam_id 
 		from users_details a, users_groups b,groups c,users_login d 
 		WHERE a.user_id=d.id and c.id=b.group_id AND a.user_id=b.user_id 
 		AND (a.email='".$param."' or a.user_id='".$param."')";

@@ -1,50 +1,107 @@
-<html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            display: flex;
+            padding : 24 px 48 px;
+            flex-direction: column;
+            align-items: center;
+            gap : 10 px;
+            align-self: stretch;
+            background-image: linear-gradient(276 deg, #3082D4 0.31 %, #47B7E8 100 %);
+            background-color: transparent;
+        }
+        .header h1 {
+            color: #FFF;
+            text-align: center;
+            font-family: "Futura Md BT";
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 100%;
+        }
+        .header img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h2 {
+            color: #333;
+        }
+        .content p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .verification-code {
+            display: block;
+            background-color: #1976D2;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #ff6f61;
+            text-decoration: none;
+        }
+    </style>
+</head>
 <body>
-				<table class="body-wrap" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; width: 100%; background-color: transparent; margin: 0;">
-                    <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                        <td style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0;" valign="top"></td>
-                        <td class="container" width="600" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; display: block !important; max-width: 600px !important; clear: both !important; margin: 0 auto;" valign="top">
-                            <div class="content" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; max-width: 600px; display: block; margin: 0 auto; padding: 20px;">
-                                <table class="main" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; border-radius: 3px; margin: 0; border: none;">
-                                    <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                        <td class="content-wrap" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; color: #495057; font-size: 14px; vertical-align: top; margin: 0;padding: 30px; box-shadow: 0 0.75rem 1.5rem rgba(18,38,63,.03); ;border-radius: 7px; background-color: #fff;" valign="top">
-                                            <meta itemprop="name" content="Confirm Email" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;" />
-                                            <table width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                    <td class="content-block" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-														Konfirmasikan alamat email Anda dengan memasukkan nomor dibawah ini.
-                                                    </td>
-                                                </tr>
-                                                <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                    <td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-														<h1><b id="activation"><?=$activation?></b></h1>
-                                                    </td>
-                                                </tr>
-												<tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                    <td class="content-block" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-                                                        Dengan mengkonfirmasi alamat email anda , maka anda dapat melindungi akun anda dengan aman.
-                                                    </td>
-                                                </tr>
-                                                <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                    <td class="content-block" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
-                                                        <b>SmartApps</b>
-                                                        <p>Support Team</p>
-                                                    </td>
-                                                </tr>
-
-                                                <tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
-                                                    <td class="content-block" style="text-align: center;font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0;" valign="top">
-                                                        © <?=date('Y')?> SmartApps
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                <!-- end table -->
+    <div class="email-container">
+        <div class="header">
+            <h1>SMA Labschool 1 Unesa<br>Surabaya</h1>
+            <!-- <img src="https://devop-sso.smalabschoolunesa1.sch.id/assets/images/Top.webp" alt="top-header" style="width: 100%; height: auto;"> -->
+        </div>
+        <div class="content">
+            <h2 id="identity">Hai <?=$identity?>,</h2>
+            <p>Selamat datang di SmartApps SMA Labschool Unesa 1 Surabaya! <br>Kami sangat senang kamu bergabung dengan keluarga kami. <br>Sebelum mulai, kami perlu memastikan bahwa ini benar-benar kamu.</p>
+            <p>Kode Verifikasi Kamu:</p>
+            <div class="verification-code" id="activation"><strong><?=$activation?></strong></div>
+            <p>Masukkan kode ini di halaman verifikasi untuk menyelesaikan pendaftaran kamu. Simple, kan?</p>
+            <p>Apa Selanjutnya?</p>
+            <ul>
+                <li><strong>Verifikasi:</strong> Masukkan kode di atas secepatnya supaya kamu bisa segera menikmati semua fitur keren dari SmartApps.</li>
+                <li><strong>Eksplorasi:</strong> Setelah verifikasi, jangan lupa jelajahi fitur-fitur yang ada dan temukan apa yang kamu suka.</li>
+                <li><strong>Koneksi:</strong> Subscribe <a href="https://www.youtube.com/@LabschoolZone">Channel Youtube</a> kami untuk update terkini dan bergabung dengan komunitas.</li>
+            </ul>
+            <p>Butuh Bantuan? Kalau ada pertanyaan atau butuh bantuan, langsung saja hubungi kami di <a href="mailto:smalabsunesa@gmail.com">smalabsunesa@gmail.com</a> atau DM kami di media sosial. Kami siap membantu!</p>
+            <p>Terima kasih sudah bergabung dengan kami. Kami nggak sabar melihat kamu mulai petualangan baru di SmartApps!</p>
+        </div>
+        <div class="footer">
+            <p>Sampai jumpa di dalam, <br><b>SmartApps</b><br>Support Team!!!</p>
+            <p>© <?=date('Y')?> SmartApps. All rights reserved.</p>
+        </div>
+    </div>
 </body>
 </html>

@@ -6,10 +6,9 @@ class View extends CI_Controller {
 	public $data = [];
 	private $_client;
 	private $_CookieJar;
+	
 	public function __construct() {
 		parent::__construct();
-		$this->load->library(['ion_auth']);
-        $this->load->helper('cookie');
 		$this->lang->load('auth');
 		$this->method = $_SERVER['REQUEST_METHOD'];
 		$this->getURL = $_SERVER['REQUEST_URI'];
