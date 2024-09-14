@@ -32,6 +32,7 @@ class Auth extends RestController {
     public function index_post($keterangan) {
         if ($this->_AuthCheck->checkTokenApi($keterangan,$this->_paramToken[explode('.',$_SERVER['HTTP_HOST'])[0]],$this->_paramToken['AUTH_KEY'])) {
             if ($keterangan=='login') {
+                var_dump($this->input->post()); return false;
                 if (filter_var($this->input->post('username'), FILTER_VALIDATE_EMAIL)) {
                     $result	= $this->_clientAPI->geToken($this->_urlAPI.'/login',$this->_dtAuth,$this->_csrfToken);
                     $dtAPI	= json_decode($result->getBody()->getContents(),true);
