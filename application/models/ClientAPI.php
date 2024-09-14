@@ -3,61 +3,49 @@
 
         private $_client;
         private $_CookieJar;
+
         public function __construct() {
             parent::__construct();
-            // Ambil nilai cookie cf_clearance dari input (misal dari framework CodeIgniter)
-            $cfClearanceValue = $this->input->cookie('cf_clearance'); 
-
-            // Inisialisasi CookieJar
-            $this->_CookieJar   =   new \GuzzleHttp\Cookie\CookieJar();
-
-            // Jika cookie cf_clearance tersedia
-            if ($cfClearanceValue) {
-// Buat SetCookie dengan array
-$setCookie = new \GuzzleHttp\Cookie\SetCookie([
-    'Name'     => 'cf_clearance',
-    'Value'    => $cfClearanceValue,
-    'Path'     => '/',
-]);
-
-// Tambahkan cookie ke CookieJar
-$this->_CookieJar->setCookie($setCookie);
-            }
-
-            $this->_client      =   new \GuzzleHttp\Client([
-                'base_uri'          => base_url()."api/server/",
-                'cookies'           => $this->_CookieJar,
-                'verify'            => true,
-                'allow_redirects'   => true,
-            ]);
+    
+            // Inisialisasi Symfony HTTP Client
+            $this->client = new \Symfony\Component\HttpClient\HttpClient;;
         }
-
-        function crToken($url,$authKey) {
+    
+        public function crToken($url, $authKey) {
+            // Dapatkan cookie cf_clearance secara manual
+            $cfClearanceValue = 'TAMH2vl.vwJPCznrpJ5vuGPUk68gHcnW.sEfCZTiNQY-1726294621-1.2.1.1-7ABaTPDrFz.0G1IVA3JzBiGCbId_zQInx_U9vJnwiRDrqV.LaUfzGH4WWZlw7gn.ZSsjX6tj5035wweSlGNhsATGJ5PQORWT2Ls8J_bfLAxf71qROHUyvNYjtlIOokx_GiQ6xJE86U.xetuFDOKDgRgmaenzHVq8bNU_d1LAlhRBAB2sJ3_2KcwLMJCeDhpyG23gMJMFPvsTB8ycVR54PULGwCQfV8xjO0es8OX.lXlWDxN9XkMUNHfL19XwBhsOKW1hIcxlpI6K90Uvlv20qHA8nBKUoULmET4ntrmYY1J4Shq_IIVMIHbDjT0jJJz3K.8m7q9_TWP.0jthhw7KMjHntOXAzA4cRHYER43z9adqOb52wOt6CpVkAnJqRFZceO.sP87KQlU2B9fqN78E6hCKjJqATbNDwAOo.HAvNo_jCliRjVxaCj.39xQxgGA.';  // Ganti dengan nilai cookie yang Anda dapatkan
+    
             try {
-                $response = $this->_client->get($url,
-                    [
-                        'headers'       => [
-                            'Authorization'     => 'Basic '.$authKey,
-                            'Cache-Control'     => 'no-cache',
-                            'Connection'        => 'keep-alive',
-                            'User-Agent'        => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-                            'Accept-Language'   => 'en-US,en;q=0.5',
-                            'Content-Type' => 'application/json',
-                        ],
-                        'query'         =>  [explode('.',$_SERVER['HTTP_HOST'])[0]=>hash('sha1',$authKey)]
+                // Lakukan request menggunakan Symfony HTTP Client
+                $response = $this->client->request('GET', $url, [
+                    'headers' => [
+                        'Authorization'     => 'Basic ' . $authKey,
+                        'Cache-Control'     => 'no-cache',
+                        'Connection'        => 'keep-alive',
+                        'User-Agent'        => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                        'Accept'            => 'application/json',
+                        'Accept-Language'   => 'en-US,en;q=0.5',
+                        'Content-Type'      => 'application/json',
                     ],
-                );
-            } catch (\GuzzleHttp\Exception\RequestException $e) {
-                if ($e->hasResponse()) {
-                    $response = $e->getResponse();
-                }
+                    // Tambahkan cookie cf_clearance ke dalam request
+                    'cookies' => [
+                        'cf_clearance' => $cfClearanceValue
+                    ],
+                ]);
+    
+                // Jika respons berhasil, ambil isi response
+                $statusCode = $response->getStatusCode(); // 200
+                $content = $response->getContent(); // Hasil dalam format JSON
+                $result = json_decode($content, true);
+    
+                // Kembalikan hasil
+                return $result;
+    
+            } catch (\Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface $e) {
+                // Tangani error
+                echo "Error: " . $e->getMessage();
+                return false;
             }
-            $result			= json_decode($response->getBody()->getContents(),true);
-            // $cookieJar      = $this->_client->getConfig('cookies');
-            // var_dump($this->input->cookie('cf_clearance'));
-            var_dump($response); return false; die;
-            $cookieArray    = $cookieJar->getCookieByName('ci_sso_csrf_cookie')->getValue();
-            return $cookieArray;
         }
 
         function geToken($url,$authKey,$csrf){

@@ -20,7 +20,8 @@
 		"phpoffice/phpspreadsheet": "^1.25",
 		"symfony/deprecation-contracts": "^3.5",
 		"google/apiclient": "^2.16",
-		"kreait/firebase-php": "*"
+		"kreait/firebase-php": "*",
+		"symfony/http-client": "*"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

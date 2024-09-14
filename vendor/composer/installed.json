@@ -65,20 +65,20 @@
         },
         {
             "name": "chriskacerguis/codeigniter-restserver",
-            "version": "3.1.5",
-            "version_normalized": "3.1.5.0",
+            "version": "3.1.6",
+            "version_normalized": "3.1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chriskacerguis/codeigniter-restserver.git",
-                "reference": "63c5ccad5581c3e0035c400aa929ba1ef0822418"
+                "reference": "bdf3548de32dc7305de6b93a47c6adb5c99c9878"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chriskacerguis/codeigniter-restserver/zipball/63c5ccad5581c3e0035c400aa929ba1ef0822418",
-                "reference": "63c5ccad5581c3e0035c400aa929ba1ef0822418",
+                "url": "https://api.github.com/repos/chriskacerguis/codeigniter-restserver/zipball/bdf3548de32dc7305de6b93a47c6adb5c99c9878",
+                "reference": "bdf3548de32dc7305de6b93a47c6adb5c99c9878",
                 "shasum": ""
             },
-            "time": "2023-07-29T18:18:15+00:00",
+            "time": "2024-09-11T00:04:58+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -99,7 +99,7 @@
             "description": "CI Rest Server",
             "support": {
                 "issues": "https://github.com/chriskacerguis/codeigniter-restserver/issues",
-                "source": "https://github.com/chriskacerguis/codeigniter-restserver/tree/3.1.5"
+                "source": "https://github.com/chriskacerguis/codeigniter-restserver/tree/3.1.6"
             },
             "install-path": "../chriskacerguis/codeigniter-restserver"
         },
