@@ -31,4 +31,16 @@ final class Sha384Test extends TestCase
 
         self::assertEquals('sha384', $signer->algorithm());
     }
+
+    /**
+     * @test
+     *
+     * @covers ::minimumBitsLengthForKey
+     */
+    public function minimumBitsLengthForKeyMustBeCorrect(): void
+    {
+        $signer = new Sha384();
+
+        self::assertSame(384, $signer->minimumBitsLengthForKey());
+    }
 }

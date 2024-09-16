@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+    pull_request:
+    push:
+
+jobs:
+    tests:
+        name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+        runs-on: "ubuntu-20.04"
+
+        strategy:
+            matrix:
+                php: ["7.4", "8.0", "8.1"]
+                stability: ["prefer-lowest", "prefer-stable"]
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  coverage: none
+
+            - name: Install dependencies
+              uses: "ramsey/composer-install@v2"
+
+            - name: Setup problem matchers for PHP
+              run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+            - name: Setup Problem Matchers for PHPUnit
+              run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+            - name: Run PHPStan
+              run: vendor/bin/phpstan
+
+            - name: Run PHPUnit
+              run: vendor/bin/phpunit

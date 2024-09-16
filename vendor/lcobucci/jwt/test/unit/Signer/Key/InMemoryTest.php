@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Lcobucci\JWT\Signer\Key;
 
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use Lcobucci\JWT\Signer\InvalidKeyProvided;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +28,8 @@ final class InMemoryTest extends TestCase
      *
      * @covers ::base64Encoded
      * @covers \Lcobucci\JWT\Encoding\CannotDecodeContent
+     *
+     * @uses \Lcobucci\JWT\SodiumBase64Polyfill::base642bin()
      */
     public function exceptionShouldBeRaisedWhenInvalidBase64CharsAreUsed(): void
     {
@@ -42,10 +45,15 @@ final class InMemoryTest extends TestCase
      * @covers ::base64Encoded
      * @covers ::__construct
      * @covers ::contents
+     *
+     * @uses \Lcobucci\JWT\SodiumBase64Polyfill::base642bin()
      */
     public function base64EncodedShouldDecodeKeyContents(): void
     {
-        $key = InMemory::base64Encoded(base64_encode('testing'));
+        $encoded = base64_encode('testing');
+        self::assertNotSame('', $encoded);
+
+        $key = InMemory::base64Encoded($encoded);
 
         self::assertSame('testing', $key->contents());
     }
@@ -131,12 +139,30 @@ final class InMemoryTest extends TestCase
      *
      * @covers ::__construct
      * @covers ::plainText
-     * @covers ::passphrase
+     * @covers \Lcobucci\JWT\Signer\InvalidKeyProvided::cannotBeEmpty
      */
-    public function passphraseShouldReturnAnEmptyStringWhenNothingWasConfigured(): void
+    public function emptyPlainTextContentShouldRaiseException(): void
     {
-        $key = InMemory::plainText('testing');
+        $this->expectException(InvalidKeyProvided::class);
 
-        self::assertSame('', $key->passphrase());
+        // @phpstan-ignore-next-line
+        InMemory::plainText('');
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::__construct
+     * @covers ::base64Encoded
+     * @covers \Lcobucci\JWT\Signer\InvalidKeyProvided::cannotBeEmpty
+     *
+     * @uses \Lcobucci\JWT\SodiumBase64Polyfill::base642bin
+     */
+    public function emptyBase64ContentShouldRaiseException(): void
+    {
+        $this->expectException(InvalidKeyProvided::class);
+
+        // @phpstan-ignore-next-line
+        InMemory::base64Encoded('');
     }
 }

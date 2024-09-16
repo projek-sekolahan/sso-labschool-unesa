@@ -34,7 +34,9 @@ use function assert;
  * @covers \Lcobucci\JWT\Signer\Rsa
  * @covers \Lcobucci\JWT\Signer\Rsa\Sha256
  * @covers \Lcobucci\JWT\Signer\Rsa\Sha512
+ * @covers \Lcobucci\JWT\SodiumBase64Polyfill
  * @covers \Lcobucci\JWT\Validation\Validator
+ * @covers \Lcobucci\JWT\Validation\ConstraintViolation
  * @covers \Lcobucci\JWT\Validation\RequiredConstraintsViolated
  * @covers \Lcobucci\JWT\Validation\Constraint\SignedWith
  */
@@ -75,7 +77,7 @@ class RsaTokenTest extends TestCase
         $builder = $this->config->builder();
 
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "RSA", "EC" provided');
 
         $builder->identifiedBy('1')
                 ->permittedFor('http://client.abc.com')
@@ -155,7 +157,7 @@ class RsaTokenTest extends TestCase
     public function signatureAssertionShouldRaiseExceptionWhenKeyIsNotRsaCompatible(Token $token): void
     {
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "RSA", "EC" provided');
 
         $this->config->validator()->assert(
             $token,

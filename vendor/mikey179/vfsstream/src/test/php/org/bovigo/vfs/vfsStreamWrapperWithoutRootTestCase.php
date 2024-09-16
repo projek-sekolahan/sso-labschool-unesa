@@ -11,12 +11,12 @@ namespace org\bovigo\vfs;
 /**
  * Test for org\bovigo\vfs\vfsStreamWrapper.
  */
-class vfsStreamWrapperWithoutRootTestCase extends \PHPUnit_Framework_TestCase
+class vfsStreamWrapperWithoutRootTestCase extends \BC_PHPUnit_Framework_TestCase
 {
     /**
      * set up test environment
      */
-    public function setUp()
+    public function setUp(): void
     {
         vfsStreamWrapper::register();
     }
@@ -48,7 +48,7 @@ class vfsStreamWrapperWithoutRootTestCase extends \PHPUnit_Framework_TestCase
      */
     public function canNotOpen()
     {
-        $this->assertFalse(@fopen(vfsStream::url('foo')));
+        $this->assertFalse(@fopen(vfsStream::url('foo'), 'r'));
     }
 
     /**
@@ -61,4 +61,3 @@ class vfsStreamWrapperWithoutRootTestCase extends \PHPUnit_Framework_TestCase
         $this->assertFalse(@rename(vfsStream::url('foo'), vfsStream::url('bar')));
     }
 }
-?>

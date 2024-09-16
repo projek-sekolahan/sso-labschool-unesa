@@ -9,12 +9,17 @@ use Kreait\Firebase\Exception\Messaging\InvalidArgument;
 use Kreait\Firebase\Exception\Messaging\InvalidMessage;
 use Kreait\Firebase\Exception\Messaging\NotFound;
 use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\MessageTarget;
 use Kreait\Firebase\Messaging\RawMessageFromArray;
+use Kreait\Firebase\Messaging\WebPushConfig;
 use Kreait\Firebase\Tests\IntegrationTestCase;
 
 /**
  * @internal
+ *
+ * @phpstan-import-type WebPushHeadersShape from WebPushConfig
  */
 final class MessagingTest extends IntegrationTestCase
 {
@@ -126,8 +131,7 @@ final class MessagingTest extends IntegrationTestCase
     public function testSendingAMessageWithEmptyMessageDataShouldNotFail(): void
     {
         $message = CloudMessage::withTarget('token', $this->getTestRegistrationToken())
-            ->withData([])
-        ;
+            ->withData([]);
 
         $this->messaging->send($message);
         $this->addToAssertionCount(1);
@@ -139,8 +143,7 @@ final class MessagingTest extends IntegrationTestCase
     public function testSendMessageWithReservedKeywordInMessageDataThatIsStillAccepted(string $keyword): void
     {
         $message = CloudMessage::withTarget('token', $this->getTestRegistrationToken())
-            ->withData([$keyword => 'value'])
-        ;
+            ->withData([$keyword => 'value']);
 
         $this->messaging->send($message);
         $this->addToAssertionCount(1);
@@ -258,13 +261,6 @@ final class MessagingTest extends IntegrationTestCase
 
         $this->assertCount(3, $report->successes());
         $this->assertCount(2, $report->failures());
-
-        $allReports = $report->getItems();
-        $this->assertSame($tokenMessage, $allReports[0]->message());
-        $this->assertSame($topicMessage, $allReports[1]->message());
-        $this->assertSame($conditionMessage, $allReports[2]->message());
-        $this->assertSame($invalidToken, $allReports[3]->message());
-        $this->assertSame($invalidMessage, $allReports[4]->message());
     }
 
     public function testValidateRegistrationTokens(): void
@@ -378,5 +374,47 @@ final class MessagingTest extends IntegrationTestCase
 
             throw $e;
         }
+    }
+
+    /**
+     * @see https://github.com/kreait/firebase-php/issues/713
+     *
+     * @dataProvider \Kreait\Firebase\Tests\Unit\Messaging\AndroidConfigTest::validTtlValues
+     *
+     * @param int|string $value
+     */
+    public function testAndroidConfigTtlWorksWithValidValues($value): void
+    {
+        $config = AndroidConfig::fromArray([
+            'ttl' => $value,
+        ]);
+
+        $message = CloudMessage::withTarget(MessageTarget::TOKEN, $this->getTestRegistrationToken())
+            ->withAndroidConfig($config);
+
+        $this->messaging->send($message);
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * @see https://github.com/kreait/firebase-php/issues/716
+     *
+     * @dataProvider \Kreait\Firebase\Tests\Unit\Messaging\WebPushConfigTest::validHeaders
+     *
+     * @param WebPushHeadersShape $headers
+     */
+    public function testWebPushConfigTtlWorksWithValidValues(array $headers): void
+    {
+        $config = WebPushConfig::fromArray([
+            'headers' => $headers,
+        ]);
+
+        $message = CloudMessage::withTarget(MessageTarget::TOKEN, $this->getTestRegistrationToken())
+            ->withWebPushConfig($config);
+
+        $this->messaging->send($message);
+
+        $this->addToAssertionCount(1);
     }
 }

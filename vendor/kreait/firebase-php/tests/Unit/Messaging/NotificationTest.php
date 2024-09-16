@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Unit\Messaging;
 
-use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Messaging\Notification;
 use Kreait\Firebase\Tests\UnitTestCase;
 
@@ -27,8 +26,7 @@ final class NotificationTest extends UnitTestCase
         $notification = Notification::create('title', 'body')
             ->withTitle($title = 'My Title')
             ->withBody($body = 'My Body')
-            ->withImageUrl($imageUrl = 'https://domain.tld/image.ext')
-        ;
+            ->withImageUrl($imageUrl = 'https://domain.tld/image.ext');
 
         $this->assertSame($title, $notification->title());
         $this->assertSame($body, $notification->body());
@@ -47,17 +45,6 @@ final class NotificationTest extends UnitTestCase
         $this->assertSame($body, $notification->body());
         $this->assertSame($imageUrl, $notification->imageUrl());
         $this->assertEquals($array, $notification->jsonSerialize());
-    }
-
-    /**
-     * @dataProvider invalidDataProvider
-     *
-     * @param array<string, mixed> $data
-     */
-    public function testCreateWithInvalidData(array $data): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        Notification::fromArray($data);
     }
 
     /**

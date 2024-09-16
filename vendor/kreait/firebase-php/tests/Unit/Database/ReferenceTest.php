@@ -9,9 +9,11 @@ use Kreait\Firebase\Database\ApiClient;
 use Kreait\Firebase\Database\Query;
 use Kreait\Firebase\Database\Reference;
 use Kreait\Firebase\Database\Snapshot;
+use Kreait\Firebase\Database\UrlBuilder;
 use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Exception\OutOfRangeException;
 use Kreait\Firebase\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -19,9 +21,8 @@ use Psr\Http\Message\UriInterface;
  */
 final class ReferenceTest extends UnitTestCase
 {
-    /** @var ApiClient|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ApiClient|MockObject */
     private $apiClient;
-
     private Reference $reference;
 
     protected function setUp(): void
@@ -29,8 +30,13 @@ final class ReferenceTest extends UnitTestCase
         parent::setUp();
 
         $this->apiClient = $this->createMock(ApiClient::class);
+        $url = 'https://project.domain.tld/parent/key';
 
-        $this->reference = new Reference(new Uri('http://domain.tld/parent/key'), $this->apiClient);
+        $this->reference = new Reference(
+            new Uri($url),
+            $this->apiClient,
+            UrlBuilder::create($url),
+        );
     }
 
     public function testGetKey(): void
@@ -80,8 +86,7 @@ final class ReferenceTest extends UnitTestCase
         $this->apiClient
             ->method('get')
             ->with($this->anything())
-            ->willReturn(['a' => true, 'b' => true, 'c' => true])
-        ;
+            ->willReturn(['a' => true, 'b' => true, 'c' => true]);
 
         $this->assertSame(['a', 'b', 'c'], $this->reference->getChildKeys());
     }
@@ -91,8 +96,7 @@ final class ReferenceTest extends UnitTestCase
         $this->apiClient
             ->method('get')
             ->with($this->anything())
-            ->willReturn('scalar value')
-        ;
+            ->willReturn('scalar value');
 
         $this->expectException(OutOfRangeException::class);
 

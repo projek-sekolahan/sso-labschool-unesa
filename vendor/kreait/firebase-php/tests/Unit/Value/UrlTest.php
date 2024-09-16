@@ -8,6 +8,8 @@ use GuzzleHttp\Psr7\Uri;
 use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Value\Url;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriInterface;
+use Stringable;
 
 /**
  * @internal
@@ -17,7 +19,7 @@ final class UrlTest extends TestCase
     /**
      * @dataProvider validValues
      *
-     * @param Uri|Url|string $value
+     * @param Stringable|string $value
      */
     public function testWithValidValue($value): void
     {
@@ -41,7 +43,7 @@ final class UrlTest extends TestCase
     }
 
     /**
-     * @return array<string, array<string|Uri|Url>>
+     * @return array<string, array<string|Stringable|UriInterface|Url>>
      */
     public function validValues(): array
     {

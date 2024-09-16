@@ -12,12 +12,12 @@ vendor/composer/installed.json: composer.json composer.lock
 
 .PHONY: phpunit
 phpunit:
-	@vendor/bin/phpunit
+	@php -d assert.exception=1 -d zend.assertions=1 vendor/bin/phpunit
 
 .PHONY: infection
 infection:
-	@vendor/bin/phpunit --testsuite=unit --coverage-xml=build/coverage-xml --log-junit=build/junit.xml $(PHPUNIT_FLAGS)
-	@vendor/bin/infection -s --threads=$(PARALLELISM) --coverage=build $(INFECTION_FLAGS)
+	@php -d assert.exception=1 -d zend.assertions=1 vendor/bin/phpunit --testsuite=unit --coverage-xml=build/coverage-xml --log-junit=build/junit.xml $(PHPUNIT_FLAGS)
+	@php -d assert.exception=1 -d zend.assertions=1 vendor/bin/infection -v -s --threads=$(PARALLELISM) --coverage=build --skip-initial-tests $(INFECTION_FLAGS)
 
 .PHONY: phpcbf
 phpcbf:
@@ -29,7 +29,7 @@ phpcs:
 
 .PHONY: phpstan
 phpstan:
-	@vendor/bin/phpstan analyse
+	@vendor/bin/phpstan analyse --memory-limit=-1
 
 .PHONY: phpbench
 phpbench:

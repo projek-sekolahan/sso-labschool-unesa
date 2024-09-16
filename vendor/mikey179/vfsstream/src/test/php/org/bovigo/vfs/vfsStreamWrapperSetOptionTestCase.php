@@ -15,7 +15,7 @@ namespace org\bovigo\vfs;
  * @see    https://github.com/mikey179/vfsStream/issues/15
  * @group  issue_15
  */
-class vfsStreamWrapperSetOptionTestCase extends \PHPUnit_Framework_TestCase
+class vfsStreamWrapperSetOptionTestCase extends \BC_PHPUnit_Framework_TestCase
 {
     /**
      * root directory
@@ -27,7 +27,7 @@ class vfsStreamWrapperSetOptionTestCase extends \PHPUnit_Framework_TestCase
     /**
      * set up test environment
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->root = vfsStream::setup();
         vfsStream::newFile('foo.txt')->at($this->root);
@@ -73,4 +73,3 @@ class vfsStreamWrapperSetOptionTestCase extends \PHPUnit_Framework_TestCase
         fclose($fp);
     }
 }
-?>

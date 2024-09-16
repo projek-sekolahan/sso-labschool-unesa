@@ -35,7 +35,9 @@ use function assert;
  * @covers \Lcobucci\JWT\Signer\Ecdsa\Sha512
  * @covers \Lcobucci\JWT\Signer\InvalidKeyProvided
  * @covers \Lcobucci\JWT\Signer\OpenSSL
+ * @covers \Lcobucci\JWT\SodiumBase64Polyfill
  * @covers \Lcobucci\JWT\Validation\Validator
+ * @covers \Lcobucci\JWT\Validation\ConstraintViolation
  * @covers \Lcobucci\JWT\Validation\RequiredConstraintsViolated
  * @covers \Lcobucci\JWT\Validation\Constraint\SignedWith
  */
@@ -49,7 +51,7 @@ class ES512TokenTest extends TestCase
     public function createConfiguration(): void
     {
         $this->config = Configuration::forAsymmetricSigner(
-            Sha512::create(),
+            new Sha512(),
             static::$ecdsaKeys['private_ec512'],
             static::$ecdsaKeys['public_ec512']
         );
@@ -76,7 +78,7 @@ class ES512TokenTest extends TestCase
         $builder = $this->config->builder();
 
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "EC", "RSA" provided');
 
         $builder->identifiedBy('1')
             ->permittedFor('http://client.abc.com')
@@ -154,7 +156,7 @@ class ES512TokenTest extends TestCase
         $this->config->validator()->assert(
             $token,
             new SignedWith(
-                Sha256::create(),
+                new Sha256(),
                 self::$ecdsaKeys['public_ec512']
             )
         );
@@ -167,7 +169,7 @@ class ES512TokenTest extends TestCase
     public function signatureAssertionShouldRaiseExceptionWhenKeyIsNotEcdsaCompatible(Token $token): void
     {
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "EC", "RSA" provided');
 
         $this->config->validator()->assert(
             $token,

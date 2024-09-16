@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /*
- * This file is part of the php-code-coverage package.
+ * This file is part of phpunit/php-code-coverage.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -10,7 +10,6 @@
 namespace SebastianBergmann\CodeCoverage\tests\Exception;
 
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\CodeCoverage\RuntimeException;
 use SebastianBergmann\CodeCoverage\UnintentionallyCoveredCodeException;
 
 final class UnintentionallyCoveredCodeExceptionTest extends TestCase
@@ -21,7 +20,6 @@ final class UnintentionallyCoveredCodeExceptionTest extends TestCase
 
         $exception = new UnintentionallyCoveredCodeException($unintentionallyCoveredUnits);
 
-        $this->assertInstanceOf(RuntimeException::class, $exception);
         $this->assertSame($unintentionallyCoveredUnits, $exception->getUnintentionallyCoveredUnits());
         $this->assertSame('', $exception->getMessage());
     }
@@ -36,10 +34,9 @@ final class UnintentionallyCoveredCodeExceptionTest extends TestCase
 
         $exception = new UnintentionallyCoveredCodeException($unintentionallyCoveredUnits);
 
-        $this->assertInstanceOf(RuntimeException::class, $exception);
         $this->assertSame($unintentionallyCoveredUnits, $exception->getUnintentionallyCoveredUnits());
 
-        $expected = <<<TXT
+        $expected = <<<'TXT'
 - foo
 - bar
 - baz

@@ -12,6 +12,7 @@ use Kreait\Firebase\Exception\Database\DatabaseError;
 use Kreait\Firebase\Exception\Database\DatabaseNotFound;
 use Kreait\Firebase\Exception\Database\UnsupportedQuery;
 use Kreait\Firebase\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
 
 /**
@@ -21,12 +22,11 @@ final class QueryTest extends UnitTestCase
 {
     protected Uri $uri;
 
-    /** @var Reference|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Reference|MockObject */
     protected $reference;
 
-    /** @var ApiClient|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ApiClient|MockObject */
     protected $apiClient;
-
     protected Query $query;
 
     protected function setUp(): void
@@ -101,8 +101,7 @@ final class QueryTest extends UnitTestCase
 
         $this->apiClient
             ->method('get')->with($this->anything())
-            ->willThrowException($exception)
-        ;
+            ->willThrowException($exception);
 
         $this->expectException(UnsupportedQuery::class);
 
@@ -113,8 +112,7 @@ final class QueryTest extends UnitTestCase
     {
         $this->apiClient
             ->method('get')->with($this->anything())
-            ->willThrowException(new DatabaseError('foo index not defined bar'))
-        ;
+            ->willThrowException(new DatabaseError('foo index not defined bar'));
 
         $this->expectException(UnsupportedQuery::class);
 
@@ -125,8 +123,7 @@ final class QueryTest extends UnitTestCase
     {
         $this->apiClient
             ->method('get')->with($this->anything())
-            ->willThrowException(DatabaseNotFound::fromUri(new Uri('https://database-name.firebaseio.com')))
-        ;
+            ->willThrowException(DatabaseNotFound::fromUri(new Uri('https://database-name.firebaseio.com')));
 
         $this->expectException(DatabaseNotFound::class);
 

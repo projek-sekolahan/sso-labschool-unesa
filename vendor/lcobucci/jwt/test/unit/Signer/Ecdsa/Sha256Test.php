@@ -20,7 +20,7 @@ final class Sha256Test extends TestCase
      */
     public function createShouldReturnAValidInstance(): void
     {
-        $signer = Sha256::create();
+        $signer = Sha256::create(); // @phpstan-ignore-line
 
         self::assertInstanceOf(Sha256::class, $signer);
     }
@@ -52,13 +52,25 @@ final class Sha256Test extends TestCase
     /**
      * @test
      *
-     * @covers ::keyLength
+     * @covers ::pointLength
      *
      * @uses \Lcobucci\JWT\Signer\Ecdsa
      */
     public function keyLengthMustBeCorrect(): void
     {
-        self::assertSame(64, $this->getSigner()->keyLength());
+        self::assertSame(64, $this->getSigner()->pointLength());
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::expectedKeyLength
+     *
+     * @uses \Lcobucci\JWT\Signer\Ecdsa::__construct
+     */
+    public function expectedKeyLengthMustBeCorrect(): void
+    {
+        self::assertSame(256, $this->getSigner()->expectedKeyLength());
     }
 
     private function getSigner(): Sha256

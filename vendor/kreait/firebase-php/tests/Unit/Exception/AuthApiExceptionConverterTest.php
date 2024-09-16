@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Unit\Exception;
 
+use Beste\Json;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
@@ -26,7 +27,6 @@ use Kreait\Firebase\Exception\Auth\UserNotFound;
 use Kreait\Firebase\Exception\Auth\WeakPassword;
 use Kreait\Firebase\Exception\AuthApiExceptionConverter;
 use Kreait\Firebase\Tests\UnitTestCase;
-use Kreait\Firebase\Util\JSON;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 
@@ -47,7 +47,7 @@ final class AuthApiExceptionConverterTest extends UnitTestCase
         $requestExcpeption = new RequestException(
             'Error without valid json',
             new Request('GET', 'https://domain.tld'),
-            new Response(400, [], $responseBody = '{"what is this"')
+            new Response(400, [], $responseBody = '{"what is this"'),
         );
 
         $convertedError = $this->converter->convertException($requestExcpeption);
@@ -60,7 +60,7 @@ final class AuthApiExceptionConverterTest extends UnitTestCase
     {
         $connectException = new ConnectException(
             'curl error xx',
-            $this->createMock(RequestInterface::class)
+            $this->createMock(RequestInterface::class),
         );
 
         $this->assertInstanceOf(ApiConnectionFailed::class, $this->converter->convertException($connectException));
@@ -81,7 +81,7 @@ final class AuthApiExceptionConverterTest extends UnitTestCase
         $requestException = new RequestException(
             'Firebase Error Test',
             new Request('GET', 'https://domain.tld'),
-            new Response(400, [], JSON::encode([
+            new Response(400, [], Json::encode([
                 'error' => [
                     'errors' => [
                         'domain' => 'global',
@@ -91,7 +91,7 @@ final class AuthApiExceptionConverterTest extends UnitTestCase
                     'code' => 400,
                     'message' => 'Some error that might include the idenfier "'.$identifier.'"',
                 ],
-            ]))
+            ])),
         );
 
         $convertedError = $this->converter->convertException($requestException);

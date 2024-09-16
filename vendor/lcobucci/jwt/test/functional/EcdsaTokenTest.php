@@ -37,11 +37,11 @@ use const PHP_EOL;
  * @covers \Lcobucci\JWT\Signer\Ecdsa\Sha512
  * @covers \Lcobucci\JWT\Signer\InvalidKeyProvided
  * @covers \Lcobucci\JWT\Signer\OpenSSL
+ * @covers \Lcobucci\JWT\SodiumBase64Polyfill
  * @covers \Lcobucci\JWT\Validation\Validator
+ * @covers \Lcobucci\JWT\Validation\ConstraintViolation
  * @covers \Lcobucci\JWT\Validation\Constraint\SignedWith
- * @covers \Lcobucci\JWT\Validation\Validator
  * @covers \Lcobucci\JWT\Validation\RequiredConstraintsViolated
- * @covers \Lcobucci\JWT\Validation\Constraint\SignedWith
  */
 class EcdsaTokenTest extends TestCase
 {
@@ -53,7 +53,7 @@ class EcdsaTokenTest extends TestCase
     public function createConfiguration(): void
     {
         $this->config = Configuration::forAsymmetricSigner(
-            Sha256::create(),
+            new Sha256(),
             static::$ecdsaKeys['private'],
             static::$ecdsaKeys['public1']
         );
@@ -80,7 +80,7 @@ class EcdsaTokenTest extends TestCase
         $builder = $this->config->builder();
 
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "EC", "RSA" provided');
 
         $builder->identifiedBy('1')
                 ->permittedFor('http://client.abc.com')
@@ -158,7 +158,7 @@ class EcdsaTokenTest extends TestCase
         $this->config->validator()->assert(
             $token,
             new SignedWith(
-                Sha512::create(),
+                new Sha512(),
                 self::$ecdsaKeys['public1']
             )
         );
@@ -171,7 +171,7 @@ class EcdsaTokenTest extends TestCase
     public function signatureAssertionShouldRaiseExceptionWhenKeyIsNotEcdsaCompatible(Token $token): void
     {
         $this->expectException(InvalidKeyProvided::class);
-        $this->expectExceptionMessage('This key is not compatible with this signer');
+        $this->expectExceptionMessage('The type of the provided key is not "EC", "RSA" provided');
 
         $this->config->validator()->assert(
             $token,
@@ -231,7 +231,7 @@ class EcdsaTokenTest extends TestCase
 
         $token = $this->config->parser()->parse($data);
         assert($token instanceof Token\Plain);
-        $constraint = new SignedWith(Sha512::create(), InMemory::plainText($key));
+        $constraint = new SignedWith(new Sha512(), InMemory::plainText($key));
 
         self::assertTrue($this->config->validator()->validate($token, $constraint));
         self::assertEquals('world', $token->claims()->get('hello'));

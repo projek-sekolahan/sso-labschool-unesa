@@ -20,7 +20,7 @@ final class Sha512Test extends TestCase
      */
     public function createShouldReturnAValidInstance(): void
     {
-        $signer = Sha512::create();
+        $signer = Sha512::create(); // @phpstan-ignore-line
 
         self::assertInstanceOf(Sha512::class, $signer);
     }
@@ -52,13 +52,25 @@ final class Sha512Test extends TestCase
     /**
      * @test
      *
-     * @covers ::keyLength
+     * @covers ::pointLength
      *
      * @uses \Lcobucci\JWT\Signer\Ecdsa
      */
     public function keyLengthMustBeCorrect(): void
     {
-        self::assertSame(132, $this->getSigner()->keyLength());
+        self::assertSame(132, $this->getSigner()->pointLength());
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::expectedKeyLength
+     *
+     * @uses \Lcobucci\JWT\Signer\Ecdsa::__construct
+     */
+    public function expectedKeyLengthMustBeCorrect(): void
+    {
+        self::assertSame(521, $this->getSigner()->expectedKeyLength());
     }
 
     private function getSigner(): Sha512

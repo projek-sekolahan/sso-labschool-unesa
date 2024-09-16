@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Integration\Database;
 
-use Kreait\Firebase\Database;
+use DateTimeImmutable;
+use Kreait\Firebase\Contract\Database;
 use Kreait\Firebase\Database\Reference;
 use Kreait\Firebase\Tests\Integration\DatabaseTestCase;
 use Kreait\Firebase\Util\DT;
 
 /**
  * @internal
+ *
+ * @group database-emulator
+ * @group emulator
  */
 final class ReferenceTest extends DatabaseTestCase
 {
@@ -81,6 +85,32 @@ final class ReferenceTest extends DatabaseTestCase
         $this->assertEquals(['second' => 'value'], $ref->getValue());
     }
 
+    public function testRemoveChildren(): void
+    {
+        $ref = $this->ref->getChild(__FUNCTION__);
+
+        $ref->set([
+            'first' => 'value',
+            'second' => [
+                'first_nested' => 'value',
+                'second_nested' => 'value',
+            ],
+            'third' => 'value',
+        ]);
+
+        $ref->removeChildren([
+            'first',
+            'second/first_nested',
+        ]);
+
+        $this->assertEquals([
+            'second' => [
+                'second_nested' => 'value',
+            ],
+            'third' => 'value',
+        ], $ref->getValue());
+    }
+
     public function testPushToGetKey(): void
     {
         $ref = $this->ref->getChild(__FUNCTION__);
@@ -106,7 +136,7 @@ final class ReferenceTest extends DatabaseTestCase
 
     public function testSetServerTimestamp(): void
     {
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         $value = $this->ref->getChild(__FUNCTION__)
             ->push(['updatedAt' => Database::SERVER_TIMESTAMP])

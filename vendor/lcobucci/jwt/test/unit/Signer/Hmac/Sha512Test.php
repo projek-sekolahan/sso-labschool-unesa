@@ -31,4 +31,16 @@ final class Sha512Test extends TestCase
 
         self::assertEquals('sha512', $signer->algorithm());
     }
+
+    /**
+     * @test
+     *
+     * @covers ::minimumBitsLengthForKey
+     */
+    public function minimumBitsLengthForKeyMustBeCorrect(): void
+    {
+        $signer = new Sha512();
+
+        self::assertSame(512, $signer->minimumBitsLengthForKey());
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Unit\Exception;
 
+use Beste\Json;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -15,7 +16,6 @@ use Kreait\Firebase\Exception\Database\DatabaseNotFound;
 use Kreait\Firebase\Exception\Database\PermissionDenied;
 use Kreait\Firebase\Exception\DatabaseApiExceptionConverter;
 use Kreait\Firebase\Tests\UnitTestCase;
-use Kreait\Firebase\Util\JSON;
 
 /**
  * @internal
@@ -23,7 +23,6 @@ use Kreait\Firebase\Util\JSON;
 final class DatabaseApiExceptionConverterTest extends UnitTestCase
 {
     private DatabaseApiExceptionConverter $converter;
-
     private Request $request;
 
     protected function setUp(): void
@@ -37,7 +36,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $requestExcpeption = new RequestException(
             'Error without valid json',
             $this->request,
-            new Response(400, [], $responseBody = '{"what is this"')
+            new Response(400, [], $responseBody = '{"what is this"'),
         );
 
         $convertedError = $this->converter->convertException($requestExcpeption);
@@ -50,7 +49,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
     {
         $connectException = new ConnectException(
             'curl error xx',
-            $this->request
+            $this->request,
         );
 
         $this->assertInstanceOf(ApiConnectionFailed::class, $this->converter->convertException($connectException));
@@ -65,7 +64,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $e = new ClientException(
             'Unused',
             $this->request,
-            new Response(400, [], '{"error": {"message": "Foo"}}')
+            new Response(400, [], '{"error": {"message": "Foo"}}'),
         );
 
         $result = $this->converter->convertException($e);
@@ -79,7 +78,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $e = new ClientException(
             'Foo',
             $this->request,
-            new Response(401, [], JSON::encode(['error' => 'Permission denied']))
+            new Response(401, [], Json::encode(['error' => 'Permission denied'])),
         );
 
         $result = $this->converter->convertException($e);
@@ -92,7 +91,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $e = new ClientException(
             'Foo',
             $this->request,
-            new Response(403, [], JSON::encode(['error' => 'Permission denied']))
+            new Response(403, [], Json::encode(['error' => 'Permission denied'])),
         );
 
         $result = $this->converter->convertException($e);
@@ -105,7 +104,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $e = new ClientException(
             'Foo',
             $this->request,
-            new Response(404, [], JSON::encode(['error' => 'Not found']))
+            new Response(404, [], Json::encode(['error' => 'Not found'])),
         );
 
         $result = $this->converter->convertException($e);
@@ -118,7 +117,7 @@ final class DatabaseApiExceptionConverterTest extends UnitTestCase
         $e = new ClientException(
             'Foo',
             $this->request,
-            new Response(500, [], $body = '<html><body>Some server exception</body></html>')
+            new Response(500, [], $body = '<html><body>Some server exception</body></html>'),
         );
         $result = $this->converter->convertException($e);
 

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Unit;
 
+use Beste\Json;
 use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Tests\UnitTestCase;
 use stdClass;
+
+use function chmod;
+use function file_get_contents;
 
 /**
  * @internal
@@ -15,9 +19,7 @@ use stdClass;
 final class ServiceAccountTest extends UnitTestCase
 {
     private string $pathToUnreadableJson;
-
     private string $pathToValidJson;
-
     private string $validJson;
 
     /** @var array<string, string> */
@@ -26,16 +28,16 @@ final class ServiceAccountTest extends UnitTestCase
     protected function setUp(): void
     {
         $this->pathToUnreadableJson = self::$fixturesDir.'/ServiceAccount/unreadable.json';
-        @\chmod($this->pathToUnreadableJson, 0000);
+        chmod($this->pathToUnreadableJson, 0000);
 
         $this->pathToValidJson = self::$fixturesDir.'/ServiceAccount/valid.json';
-        $this->validJson = (string) \file_get_contents($this->pathToValidJson);
-        $this->validData = \json_decode($this->validJson, true);
+        $this->validJson = (string) file_get_contents($this->pathToValidJson);
+        $this->validData = Json::decode($this->validJson, true);
     }
 
     protected function tearDown(): void
     {
-        @\chmod($this->pathToUnreadableJson, 0644);
+        chmod($this->pathToUnreadableJson, 0644);
     }
 
     public function testCreateFromJsonText(): void
@@ -85,7 +87,7 @@ final class ServiceAccountTest extends UnitTestCase
 
     public function testCreateFromServiceAccount(): void
     {
-        $serviceAccount = $this->createMock(ServiceAccount::class);
+        $serviceAccount = ServiceAccount::fromValue($this->validJson);
 
         $this->assertSame($serviceAccount, ServiceAccount::fromValue($serviceAccount));
     }

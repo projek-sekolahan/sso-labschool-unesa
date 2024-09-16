@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Uri;
 use Kreait\Firebase\Database;
 use Kreait\Firebase\Database\ApiClient;
 use Kreait\Firebase\Database\RuleSet;
+use Kreait\Firebase\Database\UrlBuilder;
 use Kreait\Firebase\Exception\InvalidArgumentException;
 use Kreait\Firebase\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,19 +18,19 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 final class DatabaseTest extends UnitTestCase
 {
-    /** @var ApiClient&MockObject */
+    /** @var ApiClient|MockObject */
     private $apiClient;
-
+    private string $url;
     private Uri $uri;
-
     private Database $database;
 
     protected function setUp(): void
     {
-        $this->uri = new Uri('https://database-uri.tld');
+        $this->url = 'https://database.firebaseio.tld';
+        $this->uri = new Uri($this->url);
         $this->apiClient = $this->createMock(ApiClient::class);
 
-        $this->database = new Database($this->uri, $this->apiClient);
+        $this->database = new Database($this->uri, $this->apiClient, UrlBuilder::create($this->url));
     }
 
     public function testGetReference(): void
@@ -50,7 +51,7 @@ final class DatabaseTest extends UnitTestCase
 
     public function testGetReferenceFromUrl(): void
     {
-        $url = 'https://database-uri.tld/foo/bar';
+        $url = $this->url.'/foo/bar';
 
         $this->assertSame($url, (string) $this->database->getReferenceFromUrl($url)->getUri());
     }
@@ -66,9 +67,8 @@ final class DatabaseTest extends UnitTestCase
     {
         $this->apiClient
             ->method('get')
-            ->with($this->uri->withPath('/.settings/rules'))
-            ->willReturn($expected = RuleSet::default()->getRules())
-        ;
+            ->with('/.settings/rules')
+            ->willReturn($expected = RuleSet::default()->getRules());
 
         $ruleSet = $this->database->getRuleSet();
 

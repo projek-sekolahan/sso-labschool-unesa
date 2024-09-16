@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use Kreait\Firebase\Messaging\MessageData;
 use PHPUnit\Framework\TestCase;
 
+use function hex2bin;
+
 /**
  * @internal
  */
@@ -33,6 +35,18 @@ final class MessageDataTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         MessageData::fromArray($data);
+    }
+
+    /**
+     * @see https://github.com/kreait/firebase-php/issues/709
+     */
+    public function testItDoesNotLowerCaseKeys(): void
+    {
+        $input = $output = ['notificationType' => 'email'];
+
+        $data = MessageData::fromArray($input);
+
+        $this->assertSame($data->toArray(), $output);
     }
 
     /**
@@ -81,7 +95,7 @@ final class MessageDataTest extends TestCase
             ],
             // @see https://github.com/kreait/firebase-php/issues/441
             'binary data' => [
-                ['key' => \hex2bin('81612bcffb')], // generated with \openssl_random_pseudo_bytes(5)
+                ['key' => hex2bin('81612bcffb')], // generated with \openssl_random_pseudo_bytes(5)
             ],
             'reserved_key_from' => [
                 ['from' => 'any'],
@@ -91,7 +105,7 @@ final class MessageDataTest extends TestCase
             'reserved_key_notification' => [
                 ['notification' => 'any'],
             ],
-            */
+             */
             'reserved_key_message_type' => [
                 ['message_type' => 'any'],
             ],

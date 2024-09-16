@@ -13,18 +13,14 @@
             <arg value="--no-interaction"/>
             <arg value="--no-progress"/>
             <arg value="--no-ansi"/>
-            <arg value="--no-suggest"/>
         </exec>
     </target>
 
     <target name="update-tools">
-        <exec executable="phive">
+        <exec executable="phive" taskname="phive">
             <arg value="--no-progress"/>
             <arg value="update"/>
         </exec>
-
-        <exec executable="${basedir}/tools/composer">
-            <arg value="self-update"/>
-        </exec>
     </target>
 </project>
+

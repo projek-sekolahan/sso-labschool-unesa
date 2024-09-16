@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Tests\Integration\Database;
 
+use Beste\Json;
 use Kreait\Firebase\Database\RuleSet;
 use Kreait\Firebase\Tests\Integration\DatabaseTestCase;
 
 /**
  * @internal
+ *
+ * @group database-emulator
+ * @group emulator
  */
 final class RuleSetTest extends DatabaseTestCase
 {
@@ -39,7 +43,6 @@ final class RuleSetTest extends DatabaseTestCase
         $this->assertEquals($ruleSet, self::$db->getRuleSet());
     }
 
-
     /**
      * @see https://github.com/kreait/firebase-php/issues/705
      */
@@ -49,14 +52,14 @@ final class RuleSetTest extends DatabaseTestCase
         $rules['rules'][self::$refPrefix.__FUNCTION__] = [
             'value1' => [
                 '.indexOn' => [
-                    'ab'
-                ]
+                    'ab',
+                ],
             ],
             'value2' => [
                 '.indexOn' => [
                     'cd',
-                    'ef'
-                ]
+                    'ef',
+                ],
             ],
         ];
 
@@ -66,7 +69,7 @@ final class RuleSetTest extends DatabaseTestCase
 
         $response = self::$apiClient
             ->get(
-                self::$db->getReference()->getUri()->withPath('/.settings/rules.json')
+                self::$db->getReference()->getUri()->withPath('/.settings/rules.json'),
             );
 
         $this->assertSame(200, $response->getStatusCode());

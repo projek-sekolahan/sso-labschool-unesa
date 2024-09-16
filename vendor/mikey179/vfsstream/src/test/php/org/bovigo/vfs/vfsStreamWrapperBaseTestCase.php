@@ -11,7 +11,7 @@ namespace org\bovigo\vfs;
 /**
  * Test for org\bovigo\vfs\vfsStreamWrapper.
  */
-abstract class vfsStreamWrapperBaseTestCase extends \PHPUnit_Framework_TestCase
+abstract class vfsStreamWrapperBaseTestCase extends \BC_PHPUnit_Framework_TestCase
 {
     /**
      * root directory
@@ -65,7 +65,7 @@ abstract class vfsStreamWrapperBaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * set up test environment
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->fooURL  = vfsStream::url('foo');
         $this->barURL  = vfsStream::url('foo/bar');
@@ -96,4 +96,3 @@ abstract class vfsStreamWrapperBaseTestCase extends \PHPUnit_Framework_TestCase
         vfsStreamWrapper::setRoot($this->foo);
     }
 }
-?>
